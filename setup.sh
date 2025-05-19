@@ -11,13 +11,13 @@ setup() {
     echo "keyboard-configuration keyboard-configuration/layoutcode string us" | sudo debconf-set-selections
     echo "keyboard-configuration keyboard-configuration/xkb-keymap select us" | sudo debconf-set-selections
     
-    echo "### SU: Updating System.. [1/2]"
-    sudo apt-get update
-    echo "### SU: Updated System.. [1/2]"
+    #echo "### SU: Updating System.. [1/2]"
+    #sudo apt-get update
+    #echo "### SU: Updated System.. [1/2]"
     
-    echo "### SU: Upgrading System.. [2/2]"
-    sudo apt-get upgrade -y
-    echo "### SU: Upgraded System.. [2/2]"
+    #echo "### SU: Upgrading System.. [2/2]"
+    #sudo apt-get upgrade -y
+    #echo "### SU: Upgraded System.. [2/2]"
 
     echo "### SU: Installing Discord PTB, Chromium & Chrome Remote Desktop.."
     wget -O discord-ptb.deb "https://discordapp.com/api/download/ptb?platform=linux&format=deb"
