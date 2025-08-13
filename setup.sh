@@ -1,139 +1,131 @@
 #!/bin/bash
-# Syanic Utility (Lite) 
-
 # Script made with <3 by Syanic XD (YouTube)
 
 # Kya dekh rahe ho bhai? Naam change krke apne channel par daloge?? 
 # Don't steal my code bruhh, this took hours to make.
 
+
 setup() {
     echo ""
-    echo "### SUL: Starting setup..."
-
+    echo "### SU: Stating.."
     echo "keyboard-configuration keyboard-configuration/layoutcode string us" | sudo debconf-set-selections
     echo "keyboard-configuration keyboard-configuration/xkb-keymap select us" | sudo debconf-set-selections
-
-    echo "### SUL: Installing required packages..."
+    
+    echo "### SU: Updating System.. [1/2]"
     sudo apt-get update
-    sudo apt-get install -y openbox feh conky lxterminal chromium-browser wget xserver-xorg-video-dummy
+    echo "### SU: Updated System.. [1/2]"
+    
+    echo "### SU: Upgrading System.. [2/2]"
+    sudo apt-get upgrade -y
+    echo "### SU: Upgraded System.. [2/2]"
 
-    echo "### SUL: Installing Discord PTB..."
+    echo "### SU: Installing Discord PTB, Chromium & Chrome Remote Desktop.."
     wget -O discord-ptb.deb "https://discordapp.com/api/download/ptb?platform=linux&format=deb"
-    sudo apt install ./discord-ptb.deb -y
-    rm discord-ptb.deb
-
-    echo "### SUL: Installing Chrome Remote Desktop..."
     wget https://dl.google.com/linux/direct/chrome-remote-desktop_current_amd64.deb
+    
+    sudo apt install ./discord-ptb.deb -y
+    sudo apt-get install chromium-browser -y
     sudo apt install ./chrome-remote-desktop_current_amd64.deb -y
-    rm chrome-remote-desktop_current_amd64.deb
+    
+    echo "### SU: Installing Openbox with English Keyboard.."
+    sudo apt-get install openbox -y
+    sudo apt-get install -y feh conky 
+    sudo apt install xfce4-terminal -y
+    sudo apt-get install chromium -y
 
-    echo "### SUL: Creating 2GB swap for stability..."
-    sudo fallocate -l 2G /swapfile
-    sudo chmod 600 /swapfile
-    sudo mkswap /swapfile
-    sudo swapon /swapfile
-    echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
+    mkdir -p ~/Pictures/backgrounds
+    wget -O ~/Pictures/backgrounds/bgr.jpg https://syanic.github.io/files/su-lite/bgr.jpg
+    chmod 644 ~/Pictures/backgrounds/bgr.jpg   
 
-    echo "### SUL: Disabling unnecessary services..."
-    sudo systemctl disable cups.service
-    sudo systemctl disable bluetooth.service
-    sudo apt-get purge -y snapd || true
+    mkdir -p ~/.config/openbox
+    echo 'feh --bg-fill /home/codespace/Pictures/backgrounds/bgr.jpg &' >> ~/.config/openbox/autostart
+    mkdir -p ~/.config/conky && echo -e "conky.config = {\n    background = true,\n    update_interval = 1,\n    double_buffer = true,\n    own_window = true,\n    own_window_class = 'Conky',\n    own_window_type = 'desktop',\n    own_window_transparent = true,\n    own_window_hints = 'undecorated,below,sticky,skip_taskbar,skip_pager',\n    own_window_title = 'Syanic Utility',\n    alignment = 'top_left',\n    gap_x = 10,\n    gap_y = 10,\n    minimum_width = 200,\n    minimum_height = 50,\n    draw_borders = false,\n    draw_outline = false,\n    draw_shades = false,\n    use_xft = true,\n    font = 'DejaVu Sans Mono:size=10',\n    xftalpha = 0.8,\n    color1 = 'white',\n};\n\nconky.text = [[\nSyanic Utility loaded successfully.\n]];" > ~/.config/conky/conky.conf
 
-    echo "### SUL: Configuring Openbox..."
-    mkdir -p "$HOME/Pictures/backgrounds"
-    wget -O "$HOME/Pictures/backgrounds/bgr.jpg" https://syanic.github.io/files/su-lite/bgr.jpg
-    chmod 644 "$HOME/Pictures/backgrounds/bgr.jpg"
+    echo 'conky &' >> ~/.config/openbox/autostart
+    openbox --restart
 
-    mkdir -p "$HOME/.config/openbox"
-    cat <<EOL > "$HOME/.config/openbox/autostart"
-xset -dpms
-xset s off
-feh --bg-fill "$HOME/Pictures/backgrounds/bgr.jpg" &
-conky &
-discord-ptb --disable-gpu --disable-smooth-scrolling --disable-features=UseOzonePlatform &
-EOL
+    echo "### SU: Installed Openbox with English Keyboard, set wallpaper, added Conky message, and configured Plank dock."
 
-    mkdir -p "$HOME/.config/conky"
-    cat <<EOL > "$HOME/.config/conky/conky.conf"
-conky.config = {
-    background = true,
-    update_interval = 1,
-    own_window = true,
-    own_window_type = 'desktop',
-    own_window_transparent = true,
-    alignment = 'top_left',
-    gap_x = 10,
-    gap_y = 10,
-    use_xft = true,
-    font = 'DejaVu Sans Mono:size=10',
-    color1 = 'white',
-};
-conky.text = [[
-Syanic Utility loaded successfully.
-]];
-EOL
-
-    echo "### SUL: Openbox configured. Starting CRD setup..."
     remotedesktop
 }
 
+
+
 remotedesktop() {
-    echo "### SUL: Paste your Chrome Remote Desktop's Debian SSH Command below >"
+    echo "### SU: Paste your Chrome Remote Desktop s' Derbian SSH Command below >"
     read ssh_command
 
-    echo "### SUL: Stopping any existing CRD sessions..."
-    sudo pkill -f chrome-remote-desktop || true
-    sleep 2
+    echo "### SU: Killing all existing Chrome Remote Desktop instances..."
+    sudo pkill -f chrome-remote-desktop
 
-    echo "### SUL: Removing any existing CRD hosts..."
-    existing_hosts=$(sudo /opt/google/chrome-remote-desktop/chrome-remote-desktop --list-hosts 2>/dev/null | grep -oP '(?<=\`)[a-f0-9\-]+(?=\`)')
-    if [ -n "$existing_hosts" ]; then
-        for host in $existing_hosts; do
-            sudo /opt/google/chrome-remote-desktop/chrome-remote-desktop --remove-host="$host"
-            echo "### SUL: Removed host: $host"
-        done
+    if pgrep -x "chrome-remote-desktop" > /dev/null; then
+        echo "### SU: Waiting for Chrome Remote Desktop daemon to stop..."
+        sleep 5
     else
-        echo "### SUL: No existing hosts found."
+        echo "### SU: Chrome Remote Desktop daemon is fully stopped."
     fi
 
+    echo "### SU: Removing all existing Chrome Remote Desktop hosts..."
+    existing_hosts=$(sudo /opt/google/chrome-remote-desktop/chrome-remote-desktop --list-hosts 2>/dev/null | grep -oP '(?<=`)[a-f0-9\-]+(?=`)')
+    
+    if [ -n "$existing_hosts" ]; then
+        for host in $existing_hosts; do
+            sudo /opt/google/chrome-remote-desktop/chrome-remote-desktop --remove-host=$host
+            echo "### SU: Removed host: $host"
+        done
+    else
+        echo "### SU: No existing hosts found."
+    fi
+
+    sudo pkill -f chrome-remote-desktop
     random_number=$(( RANDOM % 101 + 1 ))
     modified_command=${ssh_command//DISPLAY=/}
     modified_command=${modified_command/--name=\$(hostname)/--name=\"Sub to Syanic XD ($random_number)\"}
-    modified_command+=" --pin=111111 --size=1280x720"
-    export CHROME_REMOTE_DESKTOP_DEFAULT_FRAME_RATE=30
-
-    echo "### SUL: Starting CRD host..."
+    modified_command+="--pin=111111 --size=1280x720"
+    #echo "### Running command: $modified_command"
+    
     output=$(eval "$modified_command" 2>&1)
     sleep 5
     echo "$output"
-
+    
     if echo "$output" | grep -q "OAuth error"; then
-        echo "### SUL: Error (OAuth) -> Please provide a new SSH command."
-        ./syanic_utility_lite.sh
+        echo "### SU: Error Detected (OAuth) -> Your SSH command might be old, please provide the new SSH command."
+        ./syanic_ptb_setup.sh
     elif echo "$output" | grep -q "Host started successfully."; then
-        echo "### SUL: Machine is ready! Name: [Sub to Syanic XD ($random_number)], PIN: 111111"
+        echo "### SU: The Machine is UP and Ready!! An instance named [Sub to Syanic XD ($random_number)] should appear on your Chrome Remote Desktop APP."
+        echo "### SU: Use the code 111111 to Connect!!"
     fi
 }
 
 main() {
     echo ""
-    echo "===== SYANIC UTILITY LITE (SUL) ====="
+    echo ""
+    echo "===== SYANIC Utility LITE (SuL) ====="
     echo "Made by Syanic XD on YouTube <3"
     echo ""
     echo "Options:"
-    echo "1. Setup Minimal Openbox + CRD + Discord PTB (Lite)"
-    echo "2. Start CRD (if already setup)"
+    echo "1. Setup Openbox + Chrome Remote Connection + Discord PTB"
+    echo "2. Start Chrome Remote Connection (ONLY USE IF ALREADY SETUPED)"
     echo "3. Exit"
     echo ""
     read -p "Select an option (1/2/3): " option
 
     case $option in
-        1) setup ;;
-        2) remotedesktop ;;
-        3) echo "### SUL: Exiting..."; exit 0 ;;
-        *) echo "SUL: Invalid option."; main ;;
+        1)
+            setup
+            ;;
+        2)
+            remotedesktop
+            ;;
+        3)
+            echo "### SU: Exiting..."
+            exit 0
+            ;;
+        *)
+            echo "SU: Invalid option."
+            main
+            ;;
     esac
 }
 
 main
- 
