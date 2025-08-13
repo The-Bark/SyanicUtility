@@ -81,7 +81,7 @@ remotedesktop() {
     random_number=$(( RANDOM % 101 + 1 ))
     modified_command=${ssh_command//DISPLAY=/}
     modified_command=${modified_command/--name=\$(hostname)/--name=\"Sub to Syanic XD ($random_number)\"}
-    modified_command+="--pin=111111 --size=1280x720"
+    modified_command+="--size=1280x720 --pin=111111"
     #echo "### Running command: $modified_command"
     
     output=$(eval "$modified_command" 2>&1)
