@@ -8,8 +8,6 @@
 setup() {
     echo ""
     echo "### SU: Stating.."
-    echo "keyboard-configuration keyboard-configuration/layoutcode string us" | sudo debconf-set-selections
-    echo "keyboard-configuration keyboard-configuration/xkb-keymap select us" | sudo debconf-set-selections
     
     echo "### SU: Updating System.. [1/2]"
     sudo apt-get update
@@ -42,6 +40,8 @@ setup() {
     mkdir -p ~/.config/conky && echo -e "conky.config = {\n    background = true,\n    update_interval = 1,\n    double_buffer = true,\n    own_window = true,\n    own_window_class = 'Conky',\n    own_window_type = 'desktop',\n    own_window_transparent = true,\n    own_window_hints = 'undecorated,below,sticky,skip_taskbar,skip_pager',\n    own_window_title = 'Syanic Utility',\n    alignment = 'top_left',\n    gap_x = 10,\n    gap_y = 10,\n    minimum_width = 200,\n    minimum_height = 50,\n    draw_borders = false,\n    draw_outline = false,\n    draw_shades = false,\n    use_xft = true,\n    font = 'DejaVu Sans Mono:size=10',\n    xftalpha = 0.8,\n    color1 = 'white',\n};\n\nconky.text = [[\nSyanic Utility loaded successfully.\n]];" > ~/.config/conky/conky.conf
 
     echo 'conky &' >> ~/.config/openbox/autostart
+    echo "keyboard-configuration keyboard-configuration/layoutcode string us" | sudo debconf-set-selections
+    echo "keyboard-configuration keyboard-configuration/xkb-keymap select us" | sudo debconf-set-selections
     openbox --restart
 
     echo "### SU: Installed Openbox with English Keyboard, set wallpaper, added Conky message, and configured Plank dock."
