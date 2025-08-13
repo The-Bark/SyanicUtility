@@ -66,7 +66,7 @@ EOL
 
     echo "### SUL: Configuring Openbox..."
     mkdir -p "$HOME/Pictures/backgrounds"
-    wget -O "$HOME/Pictures/backgrounds/bgr.jpg" https://syanic.github.io/files/bgr.jpg
+    wget -O "$HOME/Pictures/backgrounds/bgr.jpg" https://syanic.github.io/files/su-lite/bgr.jpg
     chmod 644 "$HOME/Pictures/backgrounds/bgr.jpg"
 
     mkdir -p "$HOME/.config/openbox"
