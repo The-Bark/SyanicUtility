@@ -29,7 +29,7 @@ setup() {
     sudo apt-get install openbox -y
     sudo apt-get install -y feh conky 
     sudo apt install xfce4-terminal -y
-    sudo apt-get install chromium -y
+    sudo apt-get install firefox -y
 
     mkdir -p ~/Pictures/backgrounds
     wget -O ~/Pictures/backgrounds/bgr.jpg https://syanic.github.io/files/su-lite/bgr.jpg
