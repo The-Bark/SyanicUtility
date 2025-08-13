@@ -39,31 +39,6 @@ setup() {
     sudo systemctl disable bluetooth.service
     sudo apt-get purge -y snapd || true
 
-    echo "### SUL: Configuring dummy 720p X server..."
-    sudo tee /etc/X11/xorg.conf > /dev/null <<EOL
-Section "Device"
-  Identifier "Configured Video Device"
-  Driver "dummy"
-EndSection
-
-Section "Monitor"
-  Identifier "Configured Monitor"
-  HorizSync 31.5-48.5
-  VertRefresh 50-70
-EndSection
-
-Section "Screen"
-  Identifier "Default Screen"
-  Monitor "Configured Monitor"
-  Device "Configured Video Device"
-  DefaultDepth 24
-  SubSection "Display"
-    Depth 24
-    Modes "1280x720"
-  EndSubSection
-EndSection
-EOL
-
     echo "### SUL: Configuring Openbox..."
     mkdir -p "$HOME/Pictures/backgrounds"
     wget -O "$HOME/Pictures/backgrounds/bgr.jpg" https://syanic.github.io/files/su-lite/bgr.jpg
